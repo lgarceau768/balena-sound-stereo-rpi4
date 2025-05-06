@@ -50,6 +50,7 @@ services:
 
   airplay:
     build: ./plugins/airplay
+    context: ./plugins/airplay
     restart: on-failure
     network_mode: host
     privileged: true

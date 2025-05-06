@@ -2,7 +2,9 @@ name: balenaSound
 type: sw.application
 description: >-
   Build a single or multi-room streamer for an existing audio device using a
-  Raspberry Pi! Supports Bluetooth, Airplay2 and Spotify Connect
+  Raspberry Pi! Supports Bluetooth, Airplay2 and Spotify Connect.
+  Built specifically for rpi3 model b 64bit and rpi4 models with stereo output 
+  (3.5mm jack)
 fleetcta: Sounds good
 post-provisioning: >-
   ## Usage instructions
@@ -10,7 +12,7 @@ assets:
   repository:
     type: blob.asset
     data:
-      url: 'https://github.com/balena-io-experimental/balena-sound'
+      url: 'https://github.com/lgarceau768/balena-sound-stereo-rpi4'
   logo:
     type: blob.asset
     data:
@@ -22,10 +24,6 @@ data:
     - AUDIO_OUTPUT: AUTO
   defaultDeviceType: raspberry-pi
   supportedDeviceTypes:
-    - raspberry-pi
-    - raspberry-pi2
     - raspberrypi3
     - raspberrypi4-64
-    - fincm3
-    - intel-nuc
-version: 3.10.0
+version: 3.11.0
