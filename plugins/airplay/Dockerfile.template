@@ -1,7 +1,5 @@
 FROM mikebrady/shairport-sync:4.1.1 as shairport
 
-# Copy in our custom Shairport-Sync configuration
-COPY shairport-sync.conf /usr/src/shairport-sync.conf
 
 WORKDIR /usr/src
 
@@ -17,6 +15,7 @@ RUN apk update && apk add --no-cache supervisor curl~=7 && \
   && apk del curl
 
 COPY start.sh /usr/src/
+COPY shairport-sync.conf /etc/shairport-sync.conf
 COPY supervisor.conf /usr/src/supervisor.conf
 
 # shairport-sync image entrypoint starts dbus and avahi daemons that we don't need
