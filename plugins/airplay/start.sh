@@ -1,4 +1,12 @@
-#!/usr/bin/env sh
+#!/bin/sh
+
+# Copy the custom Shairport-Sync configuration file
+if [ -f /usr/src/shairport-sync.conf ]; then
+  echo "Copying custom Shairport-Sync configuration..."
+  cp /usr/src/shairport-sync.conf /etc/shairport-sync.conf
+else
+  echo "Custom Shairport-Sync configuration not found. Using default configuration."
+fi
 
 if [[ -n "$SOUND_DISABLE_AIRPLAY" ]]; then
   echo "Airplay is disabled, exiting..."

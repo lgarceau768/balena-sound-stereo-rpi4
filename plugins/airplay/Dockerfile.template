@@ -1,7 +1,7 @@
 FROM mikebrady/shairport-sync:4.1.1 as shairport
 
 # Copy in our custom Shairport-Sync configuration
-COPY shairport-sync.conf /etc/shairport-sync.conf
+COPY shairport-sync.conf /usr/src/shairport-sync.conf
 
 WORKDIR /usr/src
 
