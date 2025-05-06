@@ -13,3 +13,6 @@ set-default-sink balena-sound.input
 # balena-sound.output: Set to audio sink specified by audio block
 load-module module-loopback latency_msec=%INPUT_LATENCY% source=balena-sound.input.monitor %INPUT_SINK%
 load-module module-loopback latency_msec=%OUTPUT_LATENCY% source=balena-sound.output.monitor %OUTPUT_SINK%
+
+# ensure headphone jack is default
+set-default-sink alsa_output.platform-fe00b840.mailbox.stereo-fallback
