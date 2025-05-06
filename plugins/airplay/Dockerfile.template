@@ -1,23 +1,63 @@
-FROM mikebrady/shairport-sync:4.1.1 as shairport
+FROM alpine:3.18 as builder
 
+# Install dependencies for building Shairport Sync
+RUN apk add --no-cache \
+    build-base \
+    git \
+    autoconf \
+    automake \
+    libtool \
+    alsa-lib-dev \
+    pulseaudio-dev \
+    soxr-dev \
+    libconfig-dev \
+    avahi-dev \
+    openssl-dev \
+    dbus-dev \
+    popt-dev
 
+# Clone the Shairport Sync repository
 WORKDIR /usr/src
+RUN git clone https://github.com/mikebrady/shairport-sync.git
+WORKDIR /usr/src/shairport-sync
 
+# Checkout the desired version (4.1.1)
+RUN git checkout 4.1.1
+
+# Build Shairport Sync with PulseAudio support
+RUN autoreconf -i -f && \
+    ./configure --with-pa --with-alsa --with-avahi --with-soxr --with-ssl=openssl && \
+    make && \
+    make install
+
+# Final image
+FROM alpine:3.18
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    pulseaudio \
+    alsa-lib \
+    soxr \
+    libconfig \
+    avahi \
+    openssl \
+    dbus \
+    popt \
+    supervisor
+
+# Copy the built Shairport Sync binary
+COPY --from=builder /usr/local/bin/shairport-sync /usr/local/bin/shairport-sync
+
+# Set up working directory and environment variables
+WORKDIR /usr/src
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
-
-# DL4006: https://github.com/hadolint/hadolint/wiki/DL4006
-SHELL ["/bin/sh", "-eo", "pipefail", "-c"]
-
-# shairport-sync docker image doesn't include pulseaudio support so we use ALSA bridge
 ENV PULSE_SERVER=tcp:localhost:4317
-RUN apk update && apk add --no-cache supervisor curl~=7 && \
-  curl -skL https://raw.githubusercontent.com/balena-io-experimental/audio/master/scripts/alsa-bridge/alpine-setup.sh | sh \
-  && apk del curl
 
+# Copy configuration and scripts
 COPY start.sh /usr/src/
 COPY shairport-sync.conf /etc/shairport-sync.conf
 COPY supervisor.conf /usr/src/supervisor.conf
 
-# shairport-sync image entrypoint starts dbus and avahi daemons that we don't need
+# Set entrypoint and command
 ENTRYPOINT []
-CMD ["supervisord","-c","/usr/src/supervisor.conf"]
+CMD ["supervisord", "-c", "/usr/src/supervisor.conf"]
